@@ -8,9 +8,18 @@ import java.nio.charset.StandardCharsets;
 
 public class RequestThread implements Runnable {
     private URL url;
+    private volatile boolean running = true; // Variable de control
 
     public RequestThread(URL url) {
         this.url = url;
+    }
+
+    public void stopRunning() {
+        this.running = false; // Detiene el bucle en `run()`
+    }
+
+    public void startRunning(){
+        this.running = true;
     }
 
     public void sendRequest() throws IOException {
@@ -31,7 +40,7 @@ public class RequestThread implements Runnable {
     @Override
     public void run() {
         int i = 0;
-        while (true) {
+        while (running) { // Verifica si debe continuar ejecutándose
             try {
                 sendRequest();
             } catch (IOException e) {
@@ -40,5 +49,10 @@ public class RequestThread implements Runnable {
             System.out.println("Request " + i + " en hilo " + Thread.currentThread().getId());
             i++;
         }
+        System.out.println("Hilo detenido: " + Thread.currentThread().getId());
+    }
+
+    public String requestString(String msg){
+        return msg;
     }
 }
